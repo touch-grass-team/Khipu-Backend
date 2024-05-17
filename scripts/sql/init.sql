@@ -77,6 +77,18 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+CREATE OR REPLACE FUNCTION logs.insert_service_id_log_file_id(
+	new_service_id int,
+	new_log_file_id int,
+  RETURNS int AS
+$BODY$
+BEGIN
+INSERT INTO logs.insert_service_id_log_file_id VALUES (new_service_id,new_log_file_id);
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
 CREATE ROLE logwriter WITH LOGIN;
 GRANT CONNECT ON DATABASE syslog_ng TO logwriter;
 REVOKE ALL ON public FROM logwriter;
