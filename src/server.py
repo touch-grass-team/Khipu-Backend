@@ -28,8 +28,8 @@ class Server(socketserver.TCPServer):
         RequestHandlerClass: Callable[[Any, Any, Self], BaseRequestHandler],
         bind_and_activate: bool = True,
     ) -> None:
+        self.allow_reuse_address = True
         super().__init__(server_address, RequestHandlerClass, bind_and_activate)
 
     def server_bind(self) -> None:
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return super().server_bind()
