@@ -6,14 +6,10 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 INSTALLER_DIR=$(pwd)
-apt-get update
+PACKAGES=$INSTALLER_DIR/install_src/packages
 
-#install postgresql
-IS_PGSQL_INSTALLED=$(dpkg-query -W -f='${Status}\n' postgresql)
-if [[ "$IS_PGSQL_INSTALLED" != "install ok installed" ]]
-	then
-	apt --assume-yes  install postgresql
-fi
+apt-get update
+apt-get install $(cat $PACKAGES)
 
 POSTGRES_STATUS=$(systemctl status postgresql | grep "Active:" | awk '{print $2}')
 if [[ "$POSTGRES_STATUS" == "active" ]]
