@@ -1,36 +1,41 @@
 import logging
 import socket
 import socketserver
-from socketserver import BaseRequestHandler
 from typing import Any, Callable, Tuple
 
+from src.config.logging import BASE_LOGGER_NAME
 
-class EventsHandler(socketserver.BaseRequestHandler):
-    
+
+class EventsHandler(socketserver.DatagramRequestHandler):
+
     def __init__(
         self,
         request: socket.socket,
         client_address: Any,
         server: socketserver.BaseServer,
     ) -> None:
-        self.logger = logging.getLogger("EventHandler")
+        self.logger = logging.getLogger(f"{BASE_LOGGER_NAME}.EventHandler")
         super().__init__(request, client_address, server)
 
     def handle(self):
-        self.request: socket.socket
-        data = self.request.recv(1024)
+        data = self.rfile.readline()
         self.logger.info(f"Handled data: {data}")
 
 
-class Server(socketserver.TCPServer):
+class Server(socketserver.UDPServer):
     def __init__(
         self,
         server_address: Tuple[str, bytes, bytearray, int],
-        RequestHandlerClass: Callable[[Any, Any], BaseRequestHandler],
+        RequestHandlerClass: Callable[[Any, Any], socketserver.DatagramRequestHandler],
         bind_and_activate: bool = True,
     ) -> None:
+        self.logger = logging.getLogger(f"{BASE_LOGGER_NAME}.Server")
         self.allow_reuse_address = True
         super().__init__(server_address, RequestHandlerClass, bind_and_activate)
+
+    def server_activate(self) -> None:
+        self.logger.info(f"Serving connection at {self.server_address}")
+        return super().server_activate()
 
     def server_bind(self) -> None:
         return super().server_bind()
