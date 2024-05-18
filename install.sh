@@ -77,8 +77,9 @@ fi
 
 #run server
 chmod +x main.py
+if pgrep main.py 
+	then 
+	pkill main.py 
+fi
 python3 main.py &
 systemctl restart syslog-ng
-
-
-
