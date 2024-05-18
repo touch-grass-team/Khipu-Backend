@@ -71,14 +71,14 @@ SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
 
 if ! test -f $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
 	then
-	cp $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf	$SYSLOG_CONF_DIR
+	cp $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
 fi
+
+#to create systemd-service
+mkdir -p /opt/khipu/backend
 
 #run server
 chmod +x main.py
-if pgrep main.py 
-	then 
-	pkill main.py 
-fi
-python3 main.py &
+pkill -f 'python3 main.py'
+nohup python3 main.py &
 systemctl restart syslog-ng
