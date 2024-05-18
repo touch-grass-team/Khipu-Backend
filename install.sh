@@ -64,3 +64,7 @@ cp $INSTALLER_DIR/scripts/init.sql $(pwd)
 su postgres -c "createdb -O postgres -e syslog_ng; \
 	psql -U postgres -d syslog_ng -f init.sql;"	
 rm init.sql
+
+#configure server
+chmod +x main.py
+python3 main.py
