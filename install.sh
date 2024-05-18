@@ -71,8 +71,7 @@ SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
 
 if ! test -f $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
 	then
-	echo -e "destination d_khipu_app{ udp("127.0.0.1" port(22822) log_fifo_size(1000)); };\n \
-	log { source(s_src); destination(d_khipu_app); };" > $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
+	cp $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf	$SYSLOG_CONF_DIR
 fi
 
 #run server
