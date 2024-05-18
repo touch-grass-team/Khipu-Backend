@@ -6,7 +6,6 @@ from src.config.logging import BASE_LOGGER_NAME, setup_logger
 from src.config.server import IP_PORT
 from src.server import EventsHandler, Server
 
-
 def setup():
     create_paths()
     setup_logger()
