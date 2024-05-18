@@ -7,7 +7,12 @@ if [ ! -d "$BUILD_DIR" ]; then
   mkdir build
 fi
 
-pip install nuitka || (echo "You must install python first!" && exit 1)
-python -m nuitka --remove-output --output-dir="$BUILD_DIR" --onefile main.py -o khipu || (echo "Build failed!" && exit 1)
-pip uninstall -y nuitka
+set -e
+python3 -m venv venv
+source venv/bin/activate
+pip3 install nuitka || (echo "You must install python first!" && exit 1)
+python3 -m nuitka --remove-output --output-dir="$BUILD_DIR" --onefile main.py -o khipu || (echo "Build failed!" && exit 1)
+pip3 uninstall -y nuitka
 echo "Finished! Binary file is in $(pwd)/$BUILD_DIR"
+deactivate
+rm -rf venv

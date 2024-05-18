@@ -9,7 +9,7 @@ INSTALLER_DIR=$(pwd)
 PACKAGES=$INSTALLER_DIR/install_src/packages
 
 apt-get update
-apt-get install $(cat $PACKAGES)
+apt-get --assume-yes install $(cat $PACKAGES)
 
 POSTGRES_STATUS=$(systemctl status postgresql | grep "Active:" | awk '{print $2}')
 if [[ "$POSTGRES_STATUS" == "active" ]]
@@ -70,8 +70,18 @@ if ! test -f $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
 	cp $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
 fi
 
-#to create systemd-service
-mkdir -p /opt/khipu/backend
+#create and start systemd-service
+SERVER_BIN_DIR=/opt/khipu/backend
+mkdir -p $SERVER_BIN_DIR 2>/dev/null
+source ./build.sh
+if ! test -f $SERVER_BIN_DIR/khipu 
+	then	
+	cp $INSTALLER_DIR/build/khipu $SERVER_BIN_DIR
+fi
+rm -rf build
+cp $INSTALLER_DIR/install_src/khipu.service /etc/systemd/system
+systemctl enable khipu
+systemctl start khipu
 
 #run server
 chmod +x main.py

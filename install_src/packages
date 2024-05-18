@@ -1,2 +1,6 @@
 postgresql-11
 python3.7
+python3-pip
+python3-venv
+patchelf
+zlib1g-dev
