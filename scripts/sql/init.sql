@@ -79,7 +79,7 @@ $BODY$
 
 CREATE OR REPLACE FUNCTION logs.insert_service_id_log_file_id(
 	new_service_id int,
-	new_log_file_id int,
+	new_log_file_id int)
   RETURNS int AS
 $BODY$
 BEGIN

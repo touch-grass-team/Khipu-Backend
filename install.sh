@@ -60,23 +60,24 @@ systemctl restart postgresql
 
 #install syslog_ng db
 cd ~postgres/
-cp $INSTALLER_DIR/scripts/init.sql $(pwd)
+cp $(find $INSTALLER_DIR -name init.sql) $(pwd)
 su postgres -c "createdb -O postgres -e syslog_ng; \
 	psql -U postgres -d syslog_ng -f init.sql;"	
 rm init.sql
+cd $INSTALLER_DIR
 
 #configure syslog-ng
 SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
 
 if ! test -f $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
 	then
-	echo "destination d_khipu_app{ udp("127.0.0.1" port(22822) log_fifo_size(1000)); };\n \
+	echo -e "destination d_khipu_app{ udp("127.0.0.1" port(22822) log_fifo_size(1000)); };\n \
 	log { source(s_src); destination(d_khipu_app); };" > $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
 fi
 
 #run server
 chmod +x main.py
-python3 main.py
+python3 main.py &
 systemctl restart syslog-ng
 
 
