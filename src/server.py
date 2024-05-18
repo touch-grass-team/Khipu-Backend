@@ -2,13 +2,14 @@ import logging
 import socket
 import socketserver
 from socketserver import BaseRequestHandler
-from typing import Any, Callable, Self
+from typing import Any, Callable, Tuple
 
 
 class EventsHandler(socketserver.BaseRequestHandler):
+    
     def __init__(
         self,
-        request: socket.socket | tuple[bytes, socket.socket],
+        request: socket.socket,
         client_address: Any,
         server: socketserver.BaseServer,
     ) -> None:
@@ -24,8 +25,8 @@ class EventsHandler(socketserver.BaseRequestHandler):
 class Server(socketserver.TCPServer):
     def __init__(
         self,
-        server_address: tuple[str | bytes | bytearray, int],
-        RequestHandlerClass: Callable[[Any, Any, Self], BaseRequestHandler],
+        server_address: Tuple[str, bytes, bytearray, int],
+        RequestHandlerClass: Callable[[Any, Any], BaseRequestHandler],
         bind_and_activate: bool = True,
     ) -> None:
         self.allow_reuse_address = True
