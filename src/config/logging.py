@@ -22,3 +22,4 @@ def setup_logger():
 
     base_logger.addHandler(file_handler)
     base_logger.addHandler(console_handler)
+    base_logger.info(f"Writing logs into {LOG_FILE_PATH}")

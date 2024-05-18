@@ -1,0 +1,13 @@
+[Unit]
+Description=Khipu backend
+
+[Service]
+ExecStart=/opt/khipu/backend/khipu
+ExecReload=kill -TERM /opt/khipu/backend/khipu
+StandardInput=null
+StandardOutput=journal
+Type=idle
+Restart=always
+
+[Install]
+WantedBy=default.target
