@@ -1,1 +1,12 @@
-python=3.7
+altgraph==0.17.4
+build==1.1.1
+certifi @ file:///croot/certifi_1671487769961/work/certifi
+importlib-metadata==6.7.0
+Nuitka==2.2.3
+ordered-set==4.1.0
+packaging==24.0
+pyproject_hooks==1.1.0
+tomli==2.0.1
+typing_extensions==4.7.1
+zipp==3.15.0
+zstandard==0.21.0

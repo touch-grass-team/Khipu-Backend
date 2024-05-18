@@ -71,7 +71,7 @@ SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
 
 if ! test -f $SYSLOG_CONF_DIR/mod-khipu-log-montior.conf
 	then
-	cp $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf	$SYSLOG_CONF_DIR
+	cp $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
 fi
 
 #run server

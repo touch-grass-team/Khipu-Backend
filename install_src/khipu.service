@@ -1,0 +1,5 @@
+[Unit]
+Description="Khipu backend"
+
+[Service]
+ExecPaths="/opt/khipu/"
