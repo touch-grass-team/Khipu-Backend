@@ -15,7 +15,7 @@ class EventsHandler(socketserver.DatagramRequestHandler):
         client_address: Any,
         server: socketserver.BaseServer,
     ) -> None:
-        self.logger = logging.getLogger(f"{BASE_LOGGER_NAME}.EventHandler")
+        self.logger = logging.getLogger(f"{BASE_LOGGER_NAME}.{__class__.__name__}")
         super().__init__(request, client_address, server)
 
     def handle(self):
@@ -32,7 +32,7 @@ class Server(socketserver.UDPServer):
         RequestHandlerClass: Callable[[Any, Any], socketserver.DatagramRequestHandler],
         bind_and_activate: bool = True,
     ) -> None:
-        self.logger = logging.getLogger(f"{BASE_LOGGER_NAME}.Server")
+        self.logger = logging.getLogger(f"{BASE_LOGGER_NAME}.{__class__.__name__}")
         self.allow_reuse_address = True
         super().__init__(server_address, RequestHandlerClass, bind_and_activate)
 
