@@ -64,15 +64,15 @@ cd $INSTALLER_DIR
 
 #configure syslog-ng
 SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
-cp -u  $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
+cp -f  $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
 
 #create and start systemd-service
 SERVER_BIN_DIR=/opt/khipu/backend
 mkdir -p $SERVER_BIN_DIR 2>/dev/null
 source ./build.sh	
-cp -u $INSTALLER_DIR/build/khipu $SERVER_BIN_DIR
+cp -f $INSTALLER_DIR/build/khipu $SERVER_BIN_DIR
 rm -rf build
-cp -u  $INSTALLER_DIR/install_src/khipu.service /etc/systemd/system
+cp -f  $INSTALLER_DIR/install_src/khipu.service /etc/systemd/system
 systemctl enable khipu
 systemctl start khipu
 
