@@ -2,6 +2,7 @@ import logging
 import socket
 import socketserver
 from typing import Any, Callable, Tuple
+from src.utils.parser import log_parse
 
 from src.config.logging import BASE_LOGGER_NAME
 
@@ -19,7 +20,9 @@ class EventsHandler(socketserver.DatagramRequestHandler):
 
     def handle(self):
         data = self.rfile.readline()
-        self.logger.info(f"Handled data: {data}")
+        log_info = log_parse(data.decode())
+        self.logger.info(log_info)
+        
 
 
 class Server(socketserver.UDPServer):
