@@ -4,7 +4,7 @@ from src.config.path import LOG_FILE_PATH
 
 BASE_LOGGER_NAME = "main"
 FORMAT = (
-    "[%(asctime)s] - [%(name)s/%(funcName)s:%(lineno)d] - [%(levelname)s] - %(message)s"
+    "%(asctime)s - %(name)s/%(funcName)s:%(lineno)d - %(levelname)s - %(message)s"
 )
 
 
