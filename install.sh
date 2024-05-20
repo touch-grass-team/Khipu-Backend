@@ -20,6 +20,21 @@ else
 	echo -e "${RED}Postgresql failed to start${NC}"
 fi
 
+#configure syslog-ng
+SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
+cp -f  $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
+
+#create and start systemd-service
+SERVER_BIN_DIR=/opt/khipu/backend
+mkdir -p $SERVER_BIN_DIR 2>/dev/null
+source ./build.sh	
+cp -f $INSTALLER_DIR/build/khipu $SERVER_BIN_DIR
+rm -rf build
+cp -f  $INSTALLER_DIR/install_src/khipu.service /etc/systemd/system
+systemctl enable khipu
+systemctl start khipu
+systemctl restart syslog-ng
+
 #give postgres rights to facl
 usermod -a -G shadow postgres
 setfacl -d -m u:postgres:r /etc/parsec/macdb
@@ -61,18 +76,3 @@ su postgres -c "createdb -O postgres -e syslog_ng; \
 	psql -U postgres -d syslog_ng -f init.sql;"	
 rm init.sql
 cd $INSTALLER_DIR
-
-#configure syslog-ng
-SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
-cp -f  $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
-
-#create and start systemd-service
-SERVER_BIN_DIR=/opt/khipu/backend
-mkdir -p $SERVER_BIN_DIR 2>/dev/null
-source ./build.sh	
-cp -f $INSTALLER_DIR/build/khipu $SERVER_BIN_DIR
-rm -rf build
-cp -f  $INSTALLER_DIR/install_src/khipu.service /etc/systemd/system
-systemctl enable khipu
-systemctl start khipu
-systemctl restart syslog-ng
