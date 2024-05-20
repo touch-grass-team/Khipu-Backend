@@ -75,9 +75,4 @@ rm -rf build
 cp -f  $INSTALLER_DIR/install_src/khipu.service /etc/systemd/system
 systemctl enable khipu
 systemctl start khipu
-
-#run server
-chmod +x main.py
-pkill -f 'python3 main.py'
-nohup python3 main.py &
 systemctl restart syslog-ng
