@@ -6,3 +6,5 @@ patchelf
 zlib1g-dev
 qt5-default
 build-essential
+python-psycopg2
+libpq-dev

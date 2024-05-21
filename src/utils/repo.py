@@ -1,23 +1,11 @@
-import psycopg2
+import psycopg
 
 def send_log(log_info):
-    try:
-         ps_connection = psycopg2.connect(user="logwriter",
-                                         password="server",
-                                         host="127.0.0.1",
-                                         port="5432",
-                                         database="syslog_ng")
+    with psycopg.connect("dbname=syslog_ng user=logwriter password=server") as conn:
 
-        cursor = ps_connection.cursor()
-        cursor.callproc(cur.execute("SELECT syslog_ng.logs.prc_ins_logs_info(%s, %s, %s, %s, %s, %s)",
-                                    (log_info.Timestamp, log_info.Level, log_info.User, log_info.Process, log_info.PID, log_info.Message)))
+        with conn.cursor() as cur:
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error while connecting to PostgreSQL", error)
+            cur.execute(("SELECT syslog_ng.logs.prc_ins_logs_info(%s, %s, %s, %s, %s, %s)",
+                         (log_info.Timestamp, log_info.Level, log_info.User, log_info.Process, log_info.PID, log_info.Message)))
 
-    finally:
-        # closing database connection.
-        if ps_connection:
-            cursor.close()
-            ps_connection.close()
-            print("PostgreSQL connection is closed")
+    conn.commit()
