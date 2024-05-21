@@ -1,7 +1,7 @@
 import psycopg
 
 def send_log(log_info):
-    with psycopg.connect("dbname=syslog_ng user=logwriter password=server") as conn:
+    with psycopg.connect("dbname=syslog_ng user=postgres password=postgres") as conn:
 
         with conn.cursor() as cur:
 
