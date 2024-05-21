@@ -73,6 +73,7 @@ systemctl restart postgresql
 cd ~postgres/
 cp $(find $INSTALLER_DIR -name init.sql) $(pwd)
 su postgres -c "createdb -O postgres -e syslog_ng; \
-	psql -U postgres -d syslog_ng -f init.sql;"	
+	psql -U postgres -d syslog_ng -f init.sql; \
+	psql -c \"alter user postgres with password 'postgres'\""	
 rm init.sql
 cd $INSTALLER_DIR

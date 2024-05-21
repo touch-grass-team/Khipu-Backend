@@ -4,3 +4,5 @@ python3-pip
 python3-venv
 patchelf
 zlib1g-dev
+qt5-default
+build-essential

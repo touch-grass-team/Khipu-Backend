@@ -6,6 +6,7 @@ from src.utils.parser import log_parse
 
 from src.config.logging import BASE_LOGGER_NAME
 
+from src.utils.repo import send_log
 
 class EventsHandler(socketserver.DatagramRequestHandler):
 
@@ -22,6 +23,7 @@ class EventsHandler(socketserver.DatagramRequestHandler):
         data = self.rfile.readline()
         log_info = log_parse(data.decode())
         self.logger.info(log_info)
+        send_log(log_info)
         
 
 
@@ -42,3 +44,5 @@ class Server(socketserver.UDPServer):
 
     def server_bind(self) -> None:
         return super().server_bind()
+
+    
