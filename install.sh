@@ -41,30 +41,30 @@ setfacl -d -m u:postgres:r /etc/parsec/macdb
 setfacl -R -m u:postgres:r /etc/parsec/macdb
 setfacl -m u:postgres:rx /etc/parsec/macdb
 
-#configure logwriter
-if ! grep -q logwriter /etc/passwd
+#configure log_writer
+if ! grep -q log_writer /etc/passwd
 	then
-	useradd -M -s /bin/bash logwriter
-	pdpl-user -l 0:0 logwriter
-	setfacl -m u:postgres:r /etc/parsec/macdb/$(id -u logwriter)
+	useradd -M -s /bin/bash log_writer
+	pdpl-user -l 0:3 log_writer
+	setfacl -m u:postgres:r /etc/parsec/macdb/$(id -u log_writer)
 fi
 
-if ! grep -q logwriter /etc/postgresql/11/main/pg_hba.conf
+if ! grep -q log_writer /etc/postgresql/11/main/pg_hba.conf
 	then
-	echo "local syslog_ng logwriter peer" >> /etc/postgresql/11/main/pg_hba.conf
+	echo "local syslog_ng log_writer peer" >> /etc/postgresql/11/main/pg_hba.conf
 fi	
 
-#configure logreader
-if ! grep -q logreader /etc/passwd 
+#configure log_reader
+if ! grep -q log_reader /etc/passwd 
 	then
-	useradd -M -s /bin/bash logreader
-	pdpl-user -l 0:0 logreader
-	setfacl -m u:postgres:r /etc/parsec/macdb/$(id -u logreader)
+	useradd -M -s /bin/bash log_reader
+	pdpl-user -l 0:3 log_reader
+	setfacl -m u:postgres:r /etc/parsec/macdb/$(id -u log_reader)
 fi
 
-if ! grep -q logreader /etc/postgresql/11/main/pg_hba.conf
+if ! grep -q log_reader /etc/postgresql/11/main/pg_hba.conf
 	then
-	echo "local syslog_ng logreader peer" >> /etc/postgresql/11/main/pg_hba.conf
+	echo "local syslog_ng log_reader peer" >> /etc/postgresql/11/main/pg_hba.conf
 fi	
 
 systemctl restart postgresql
