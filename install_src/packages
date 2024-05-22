@@ -8,3 +8,4 @@ qt5-default
 build-essential
 python-psycopg2
 libpq-dev
+libqt5sql5-psql

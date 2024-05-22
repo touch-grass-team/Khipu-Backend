@@ -2,8 +2,8 @@
 ALTER DATABASE syslog_ng SET search_path TO logs;
 CREATE ROLE server_role;
 CREATE ROLE client_role;
-CREATE USER log_writer WITH ENCRYPTED PASSWORD 'server';
-CREATE USER log_reader WITH ENCRYPTED PASSWORD 'client';
+CREATE USER log_writer WITH ENCRYPTED PASSWORD 'server' INHERIT;
+CREATE USER log_reader WITH ENCRYPTED PASSWORD 'client' INHERIT;
 
 
 CREATE TABLE IF NOT EXISTS syslog_ng.logs.logs_info(
@@ -46,15 +46,15 @@ CREATE TYPE syslog_ng.logs.logs_file_info_type AS (
 	_pid integer,
 	_message character varying);
 
-GRANT USAGE ON SCHEMA logs TO server_role,client_role;
-GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE syslog_ng.logs.logs_info to server_role;
-GRANT SELECT ON TABLE syslog_ng.logs.logs_info to client_role;
+GRANT USAGE ON SCHEMA logs TO server_role,client_role WITH GRANT OPTION;
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE syslog_ng.logs.logs_info to server_role WITH GRANT OPTION;
+GRANT SELECT ON TABLE syslog_ng.logs.logs_info to client_role WITH GRANT OPTION;
 
 REVOKE ALL ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character varying,character varying,character varying,integer,character varying) FROM public;
-GRANT EXECUTE ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character varying,character varying,character varying,integer,character varying) TO server_role;
+GRANT EXECUTE ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character varying,character varying,character varying,integer,character varying) TO server_role WITH GRANT OPTION;
 
 
-GRANT SELECT,UPDATE ON SEQUENCE syslog_ng.logs.logs_info__id_seq TO server_role;
+GRANT SELECT,UPDATE ON SEQUENCE syslog_ng.logs.logs_info__id_seq TO server_role WITH GRANT OPTION;
 
-GRANT server_role to log_writer;
+GRANT server_role to log_writer ;
 GRANT client_role to log_reader;
