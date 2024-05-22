@@ -36,7 +36,7 @@ fi
 SYSLOG_CONF_DIR=/etc/syslog-ng/conf.d
 cp -f  $INSTALLER_DIR/install_src/mod-khipu-log-montior.conf $SYSLOG_CONF_DIR
 
-create and start systemd-service
+#create and start systemd-service
 SERVER_BIN_DIR=/opt/khipu/backend
 mkdir -p $SERVER_BIN_DIR 2>/dev/null
 source ./build.sh	
@@ -77,7 +77,7 @@ fi
 
 systemctl restart postgresql
 
-install syslog_ng db
+#install syslog_ng db
 cd ~postgres/
 cp $(find $INSTALLER_DIR -name init.sql) $(pwd)
 su postgres -c "createdb -O postgres -e syslog_ng; \
