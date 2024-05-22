@@ -1,4 +1,4 @@
-﻿CREATE SCHEMA syslog_ng.logs;
+﻿CREATE SCHEMA logs;
 CREATE ROLE server_role;
 CREATE ROLE client_role;
 CREATE USER log_writer WITH ENCRYPTED PASSWORD 'server';
