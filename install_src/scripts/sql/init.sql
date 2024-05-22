@@ -1,4 +1,5 @@
 ﻿CREATE SCHEMA logs;
+ALTER DATABASE syslog_ng SET search_path TO logs;
 CREATE ROLE server_role;
 CREATE ROLE client_role;
 CREATE USER log_writer WITH ENCRYPTED PASSWORD 'server';
@@ -11,7 +12,7 @@ CREATE TABLE IF NOT EXISTS syslog_ng.logs.logs_info(
 	_level character varying(50),
 	_user_name character varying(255) NOT NULL,
 	_process_name character varying(255) NOT NULL,
-	_pid integer NOT NULL,
+	_pid integer,
 	_message character varying NOT NULL
 );
 
