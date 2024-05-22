@@ -51,7 +51,7 @@ setfacl -R -m u:postgres:r /etc/parsec/macdb
 setfacl -m u:postgres:rx /etc/parsec/macdb
 
 PG_SETTINGS=/etc/postgresql/11/main
-PG_OPTIONS=("ac_ignore_server_maclabel" "ac_enable_grant_options")
+PG_OPTIONS=("ac_ignore_server_maclabel" "ac_enable_grant_options" "ac_ignore_maclabel")
 for option in ${PG_OPTIONS[@]}; do
 	change_line $option "$option = true" $PG_SETTINGS/postgresql.conf
 done

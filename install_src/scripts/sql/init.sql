@@ -56,5 +56,5 @@ GRANT EXECUTE ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character v
 
 GRANT SELECT,UPDATE ON SEQUENCE syslog_ng.logs.logs_info__id_seq TO server_role WITH GRANT OPTION;
 
-GRANT server_role to log_writer ;
+GRANT server_role to log_writer;
 GRANT client_role to log_reader;
