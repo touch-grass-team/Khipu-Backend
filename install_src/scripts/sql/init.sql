@@ -99,7 +99,14 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
- 
+
+COMMENT ON FUNCTION syslog_ng.logs.select_logs_info_with_filter(
+	timestamp,
+	timestamp,
+	character varying,
+	character varying,
+	character varying) IS 'Returns filtered logs';
+
 CREATE OR REPLACE FUNCTION logs.prc_get_logs_by_time(
 	need_time timestamp)
 RETURNS SETOF logs.type_logs_info AS
@@ -111,3 +118,51 @@ $BODY$
  ROWS 1000;
 
 COMMENT ON FUNCTION logs.prc_get_logs_by_time(timestamp) IS 'Возращает логи, >= заданному времени';
+
+CREATE OR REPLACE FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time(
+	asc_order boolean,
+	number_of_logs integer,
+	f_bot_timestamp timestamp,
+	f_ceil_timestamp timestamp,
+	f_level character varying(50),
+	f_user_name character varying(255),
+	f_process_name character varying(255))
+RETURNS TABLE(log syslog_ng.logs.logs_file_info_type) AS
+$BODY$
+BEGIN
+IF asc_order IS NULL THEN
+	RAISE EXCEPTION 'asc_order cannot be NULL';
+END IF;
+
+IF number_of_logs IS NULL OR number_of_logs < 0 THEN
+	RAISE EXCEPTION 'number_of_logs cannot be NULL or less than 0';
+END IF;
+
+CREATE TEMP TABLE res_asc OF syslog_ng.logs.logs_file_info_type ON COMMIT DROP;
+INSERT INTO res_asc
+	SELECT *
+	FROM syslog_ng.logs.select_logs_info_with_filter(
+	  f_bot_timestamp,
+	  f_ceil_timestamp,
+	  f_level,
+	  f_user_name,
+	  f_process_name)
+	ORDER BY
+	  CASE WHEN asc_order=TRUE THEN _timestamp END ASC,
+	  CASE WHEN asc_order=FALSE THEN _timestamp END DESC
+	LIMIT number_of_logs;
+RETURN QUERY SELECT * FROM res_asc;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+COMMENT ON FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time(
+	boolean,
+	integer,
+	timestamp,
+	timestamp,
+	character varying,
+	character varying,
+	character varying) IS 'Returns n logs arranged by time asc/desc';
+
