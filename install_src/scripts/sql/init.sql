@@ -167,3 +167,79 @@ COMMENT ON FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time(
 	character varying,
 	character varying) IS 'Returns n logs arranged by time asc/desc';
 
+
+CREATE OR REPLACE FUNCTION syslog_ng.logs.get_stat_table_of_warnings(
+	f_bot_timestamp timestamp,
+	f_ceil_timestamp timestamp,
+	f_user_name character varying(255),
+	f_process_name character varying(255))
+RETURNS TABLE(level character varying(50), num_of_appearance int) AS
+$BODY$
+BEGIN
+CREATE TEMP TABLE res_asc(level character varying(50),num_of_appearance int) ON COMMIT DROP;
+INSERT INTO res_asc
+	SELECT _level,COUNT(*)
+	FROM syslog_ng.logs.select_logs_info_with_filter(
+	  f_bot_timestamp,
+	  f_ceil_timestamp,
+	  null,
+	  f_user_name,
+	  f_process_name)
+	GROUP BY _level;
+RETURN QUERY SELECT * FROM res_asc;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+
+COMMENT ON FUNCTION syslog_ng.logs.get_stat_table_of_warnings(
+	timestamp,
+	timestamp,
+	character varying,
+	character varying) IS 'Returns number of logs grouped by level';
+
+
+CREATE OR REPLACE FUNCTION syslog_ng.logs.get_n_messages(
+	asc_order boolean,
+	number_of_logs integer,
+	f_bot_timestamp timestamp,
+	f_ceil_timestamp timestamp,
+	f_level character varying(50),
+	f_user_name character varying(255),
+	f_process_name character varying(255))
+RETURNS TABLE(message character varying, num_of_appear integer) AS
+$BODY$
+BEGIN
+IF asc_order IS NULL THEN
+	RAISE EXCEPTION 'asc_order cannot be NULL';
+END IF;
+
+IF number_of_logs < 0 THEN
+	RAISE EXCEPTION 'Number_of_logs cannot be less than 0';
+END IF;
+
+CREATE TEMP TABLE res_asc (log_message character varying, num_of_appearance integer) ON COMMIT DROP;
+INSERT INTO res_asc
+	SELECT _message,COUNT(*)
+	FROM syslog_ng.logs.select_logs_info_with_filter(
+	  f_bot_timestamp,
+	  f_ceil_timestamp,
+	  f_level,
+	  f_user_name,
+	  f_process_name)
+	GROUP BY
+	  _message;
+RETURN QUERY 
+	SELECT * 
+	FROM res_asc
+	ORDER BY
+	  CASE WHEN asc_order=TRUE THEN num_of_appearance END ASC,
+	  CASE WHEN asc_order=FALSE THEN num_of_appearance END DESC
+        LIMIT CASE WHEN number_of_logs IS NOT NULL 
+          THEN number_of_logs END;	
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
