@@ -49,6 +49,7 @@ CREATE TYPE syslog_ng.logs.logs_file_info_type AS (
 GRANT USAGE ON SCHEMA logs TO server_role,client_role WITH GRANT OPTION;
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE syslog_ng.logs.logs_info to server_role WITH GRANT OPTION;
 GRANT SELECT ON TABLE syslog_ng.logs.logs_info to client_role WITH GRANT OPTION;
+GRANT TEMP ON DATABASE syslog_ng TO client_role WITH GRANT OPTION;
 
 REVOKE ALL ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character varying,character varying,character varying,integer,character varying) FROM public;
 GRANT EXECUTE ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character varying,character varying,character varying,integer,character varying) TO server_role WITH GRANT OPTION;
@@ -58,3 +59,45 @@ GRANT SELECT,UPDATE ON SEQUENCE syslog_ng.logs.logs_info__id_seq TO server_role 
 
 GRANT server_role to log_writer;
 GRANT client_role to log_reader;
+
+
+CREATE OR REPLACE FUNCTION syslog_ng.logs.select_logs_info_with_filter(
+	f_bot_timestamp timestamp,
+	f_ceil_timestamp timestamp,
+	f_level character varying(50),
+	f_user_name character varying(255),
+	f_process_name character varying(255))
+RETURNS TABLE(log syslog_ng.logs.logs_file_info_type) AS
+$BODY$
+BEGIN
+CREATE TEMP TABLE res_table OF syslog_ng.logs.logs_file_info_type ON COMMIT DROP;
+INSERT INTO res_table SELECT * FROM syslog_ng.logs.logs_info;
+IF f_bot_timestamp IS NOT NULL AND f_ceil_timestamp IS NOT NULL THEN
+  DELETE
+  FROM res_table
+  WHERE _timestamp NOT BETWEEN f_bot_timestamp AND f_ceil_timestamp;
+END IF;
+
+IF f_level IS NOT NULL THEN
+  DELETE
+  FROM res_table
+  WHERE _level<>f_level;
+END IF;
+
+IF f_user_name IS NOT NULL THEN
+  DELETE
+  FROM res_table
+  WHERE _user_name<>f_user_name;
+END IF;
+
+IF f_process_name IS NOT NULL THEN
+  DELETE
+  FROM res_table
+  WHERE _process_name<>f_process_name;
+END IF;
+RETURN QUERY SELECT * FROM res_table;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ 
