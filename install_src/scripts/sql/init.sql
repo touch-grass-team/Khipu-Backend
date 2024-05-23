@@ -134,8 +134,8 @@ IF asc_order IS NULL THEN
 	RAISE EXCEPTION 'asc_order cannot be NULL';
 END IF;
 
-IF number_of_logs IS NULL OR number_of_logs < 0 THEN
-	RAISE EXCEPTION 'number_of_logs cannot be NULL or less than 0';
+IF number_of_logs < 0 THEN
+	RAISE EXCEPTION 'Number_of_logs cannot be less than 0';
 END IF;
 
 CREATE TEMP TABLE res_asc OF syslog_ng.logs.logs_file_info_type ON COMMIT DROP;
@@ -150,7 +150,8 @@ INSERT INTO res_asc
 	ORDER BY
 	  CASE WHEN asc_order=TRUE THEN _timestamp END ASC,
 	  CASE WHEN asc_order=FALSE THEN _timestamp END DESC
-	LIMIT number_of_logs;
+	LIMIT CASE WHEN number_of_logs IS NOT NULL 
+	  THEN number_of_logs END;
 RETURN QUERY SELECT * FROM res_asc;
 END;
 $BODY$
