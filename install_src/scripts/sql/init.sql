@@ -37,7 +37,7 @@ $BODY$
 
 COMMENT ON FUNCTION syslog_ng.logs.prc_ins_logs_info(timestamp,character varying,character varying,character varying,integer,character varying) IS 'Вставляет данные данные о новой записи';
 
-CREATE TYPE syslog_ng.logs.logs_file_info_type AS (
+CREATE TYPE syslog_ng.logs.type_logs_info AS (
 	_id integer,
 	_timestamp timestamp,
 	_level character varying(50),
@@ -60,16 +60,16 @@ GRANT SELECT,UPDATE ON SEQUENCE syslog_ng.logs.logs_info__id_seq TO server_role 
 GRANT server_role to log_writer;
 GRANT client_role to log_reader;
 
-CREATE OR REPLACE FUNCTION syslog_ng.logs.select_logs_info_with_filter(
+CREATE OR REPLACE FUNCTION syslog_ng.logs.prc_get_logs_info_with_filter(
 	f_bot_timestamp timestamp,
 	f_ceil_timestamp timestamp,
 	f_level character varying(50),
 	f_user_name character varying(255),
 	f_process_name character varying(255))
-RETURNS TABLE(log syslog_ng.logs.logs_file_info_type) AS
+RETURNS TABLE(log syslog_ng.logs.type_logs_info) AS
 $BODY$
 BEGIN
-CREATE TEMP TABLE res_table OF syslog_ng.logs.logs_file_info_type ON COMMIT DROP;
+CREATE TEMP TABLE res_table OF syslog_ng.logs.type_logs_info ON COMMIT DROP;
 INSERT INTO res_table SELECT * FROM syslog_ng.logs.logs_info;
 IF f_bot_timestamp IS NOT NULL AND f_ceil_timestamp IS NOT NULL THEN
   DELETE
@@ -100,7 +100,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
-COMMENT ON FUNCTION syslog_ng.logs.select_logs_info_with_filter(
+COMMENT ON FUNCTION syslog_ng.logs.prc_get_logs_info_with_filter(
 	timestamp,
 	timestamp,
 	character varying,
@@ -119,7 +119,7 @@ $BODY$
 
 COMMENT ON FUNCTION logs.prc_get_logs_by_time(timestamp) IS 'Возращает логи, >= заданному времени';
 
-CREATE OR REPLACE FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time(
+CREATE OR REPLACE FUNCTION syslog_ng.logs.prc_get_n_filtered_logs_ordered_by_time(
 	asc_order boolean,
 	number_of_logs integer,
 	f_bot_timestamp timestamp,
@@ -127,7 +127,7 @@ CREATE OR REPLACE FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time
 	f_level character varying(50),
 	f_user_name character varying(255),
 	f_process_name character varying(255))
-RETURNS TABLE(log syslog_ng.logs.logs_file_info_type) AS
+RETURNS TABLE(log syslog_ng.logs.type_logs_info) AS
 $BODY$
 BEGIN
 IF asc_order IS NULL THEN
@@ -138,7 +138,7 @@ IF number_of_logs < 0 THEN
 	RAISE EXCEPTION 'Number_of_logs cannot be less than 0';
 END IF;
 
-CREATE TEMP TABLE res_asc OF syslog_ng.logs.logs_file_info_type ON COMMIT DROP;
+CREATE TEMP TABLE res_asc OF syslog_ng.logs.type_logs_info ON COMMIT DROP;
 INSERT INTO res_asc
 	SELECT *
 	FROM syslog_ng.logs.select_logs_info_with_filter(
@@ -158,7 +158,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
-COMMENT ON FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time(
+COMMENT ON FUNCTION syslog_ng.logs.prc_get_n_filtered_logs_ordered_by_time(
 	boolean,
 	integer,
 	timestamp,
@@ -168,7 +168,7 @@ COMMENT ON FUNCTION syslog_ng.logs.select_n_filtered_logs_ordered_by_time(
 	character varying) IS 'Returns n logs arranged by time asc/desc';
 
 
-CREATE OR REPLACE FUNCTION syslog_ng.logs.get_stat_table_of_warnings(
+CREATE OR REPLACE FUNCTION syslog_ng.logs.prc_get_stat_table_of_warnings(
 	f_bot_timestamp timestamp,
 	f_ceil_timestamp timestamp,
 	f_user_name character varying(255),
@@ -193,14 +193,14 @@ $BODY$
   COST 100;
 
 
-COMMENT ON FUNCTION syslog_ng.logs.get_stat_table_of_warnings(
+COMMENT ON FUNCTION syslog_ng.logs.prc_get_stat_table_of_warnings(
 	timestamp,
 	timestamp,
 	character varying,
 	character varying) IS 'Returns number of logs grouped by level';
 
 
-CREATE OR REPLACE FUNCTION syslog_ng.logs.get_n_messages(
+CREATE OR REPLACE FUNCTION syslog_ng.logs.prc_get_n_messages(
 	asc_order boolean,
 	number_of_logs integer,
 	f_bot_timestamp timestamp,
