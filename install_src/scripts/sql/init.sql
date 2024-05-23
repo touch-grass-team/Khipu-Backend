@@ -243,3 +243,29 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+CREATE TYPE logs.type_unique_users AS(
+	_user_name character varying(255)
+);
+
+CREATE OR REPLACE FUNCTION logs.prc_get_unique_users()
+ RETURNS SETOF type_unique_users AS
+ $BODY$
+ SELECT DISTINCT "_user_name" FROM logs.logs_info
+ $BODY$
+  LANGUAGE sql VOLATILE
+  COST 100
+  ROWS 1000;
+
+
+CREATE TYPE logs.type_unique_process AS(
+	_process_name character varying(255)
+);
+
+CREATE OR REPLACE FUNCTION logs.prc_get_unique_processes()
+ RETURNS SETOF type_unique_process AS
+ $BODY$
+ SELECT DISTINCT "_process_name" FROM logs.logs_info
+ $BODY$
+  LANGUAGE sql VOLATILE
+  COST 100
+  ROWS 1000;
