@@ -141,7 +141,7 @@ END IF;
 CREATE TEMP TABLE res_asc OF logs.type_logs_info ON COMMIT DROP;
 INSERT INTO res_asc
 	SELECT *
-	FROM logs.select_logs_info_with_filter(
+	FROM logs.prc_get_logs_info_with_filter(
 	  f_bot_timestamp,
 	  f_ceil_timestamp,
 	  f_level,
@@ -179,7 +179,7 @@ BEGIN
 CREATE TEMP TABLE res_asc(level character varying(50),num_of_appearance int) ON COMMIT DROP;
 INSERT INTO res_asc
 	SELECT _level,COUNT(*)
-	FROM logs.select_logs_info_with_filter(
+	FROM logs.prc_get_logs_info_with_filter(
 	  f_bot_timestamp,
 	  f_ceil_timestamp,
 	  null,
@@ -222,7 +222,7 @@ END IF;
 CREATE TEMP TABLE res_asc (log_message character varying, num_of_appearance integer) ON COMMIT DROP;
 INSERT INTO res_asc
 	SELECT _message,COUNT(*)
-	FROM logs.select_logs_info_with_filter(
+	FROM logs.prc_get_logs_info_with_filter(
 	  f_bot_timestamp,
 	  f_ceil_timestamp,
 	  f_level,

@@ -26,7 +26,8 @@ def log_parse(log: bytes):
     pid = re.search(r"\[(\d+)\]", head[3])
     if pid:
         pid = pid[1]
-    message = parts[2]
+    message = parts[2].replace('\t',' ').strip()
+    message = " ".join(message.split())
     log_info = LogInfo(
         Timestamp=timestamp, User=user, Process=proccess, PID=pid, Message=message, Level=level
     )
