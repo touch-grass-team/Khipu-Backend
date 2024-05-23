@@ -60,7 +60,6 @@ GRANT SELECT,UPDATE ON SEQUENCE syslog_ng.logs.logs_info__id_seq TO server_role 
 GRANT server_role to log_writer;
 GRANT client_role to log_reader;
 
-
 CREATE OR REPLACE FUNCTION syslog_ng.logs.select_logs_info_with_filter(
 	f_bot_timestamp timestamp,
 	f_ceil_timestamp timestamp,
@@ -101,3 +100,14 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
  
+CREATE OR REPLACE FUNCTION logs.prc_get_logs_by_time(
+	need_time timestamp)
+RETURNS SETOF logs.type_logs_info AS
+$BODY$
+SELECT * FROM logs.logs_info WHERE "_timestamp" >= need_time ORDER BY "_timestamp"
+$BODY$
+ LANGUAGE sql
+ COST 100
+ ROWS 1000;
+
+COMMENT ON FUNCTION logs.prc_get_logs_by_time(timestamp) IS 'Возращает логи, >= заданному времени';
