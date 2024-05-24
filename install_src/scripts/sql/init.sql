@@ -208,7 +208,7 @@ CREATE OR REPLACE FUNCTION logs.prc_get_n_messages(
 	f_level character varying(50),
 	f_user_name character varying(255),
 	f_process_name character varying(255))
-RETURNS TABLE(message character varying, num_of_appear integer) AS
+RETURNS TABLE(num_of_appearance integer, message character varying) AS
 $BODY$
 BEGIN
 IF asc_order IS NULL THEN
@@ -219,9 +219,9 @@ IF number_of_logs < 0 THEN
 	RAISE EXCEPTION 'Number_of_logs cannot be less than 0';
 END IF;
 
-CREATE TEMP TABLE res_asc (log_message character varying, num_of_appearance integer) ON COMMIT DROP;
+CREATE TEMP TABLE res_asc (num_of_appear integer, log_message character varying) ON COMMIT DROP;
 INSERT INTO res_asc
-	SELECT _message,COUNT(*)
+	SELECT COUNT(*),_message
 	FROM logs.prc_get_logs_info_with_filter(
 	  f_bot_timestamp,
 	  f_ceil_timestamp,
