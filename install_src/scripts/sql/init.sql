@@ -234,8 +234,8 @@ RETURN QUERY
 	SELECT * 
 	FROM res_asc
 	ORDER BY
-	  CASE WHEN asc_order=TRUE THEN num_of_appearance END ASC,
-	  CASE WHEN asc_order=FALSE THEN num_of_appearance END DESC
+	  CASE WHEN asc_order=TRUE THEN num_of_appear END ASC,
+	  CASE WHEN asc_order=FALSE THEN num_of_appear END DESC
         LIMIT CASE WHEN number_of_logs IS NOT NULL 
           THEN number_of_logs END;	
 END;
