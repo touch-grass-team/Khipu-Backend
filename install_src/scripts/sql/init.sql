@@ -248,7 +248,7 @@ CREATE TYPE logs.type_unique_users AS(
 );
 
 CREATE OR REPLACE FUNCTION logs.prc_get_unique_users()
- RETURNS SETOF type_unique_users AS
+ RETURNS SETOF logs.type_unique_users AS
  $BODY$
  SELECT DISTINCT "_user_name" FROM logs.logs_info
  $BODY$
@@ -262,7 +262,7 @@ CREATE TYPE logs.type_unique_process AS(
 );
 
 CREATE OR REPLACE FUNCTION logs.prc_get_unique_processes()
- RETURNS SETOF type_unique_process AS
+ RETURNS SETOF logs.type_unique_process AS
  $BODY$
  SELECT DISTINCT "_process_name" FROM logs.logs_info
  $BODY$
